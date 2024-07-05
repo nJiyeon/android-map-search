@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         historyAdapter = HistoryAdapter { name ->
-            viewModel.removeHistory(name)
+            viewModel.removeHistory(name) // 삭제 버튼 클릭 시 ViewModel의 removeHistory 메서드 호출
         }
 
         binding.recyclerViewPlaces.apply {

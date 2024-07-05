@@ -42,3 +42,4 @@ class HistoryAdapter(private val onDelete: (String) -> Unit) : RecyclerView.Adap
         notifyDataSetChanged()
     }
 }
+
