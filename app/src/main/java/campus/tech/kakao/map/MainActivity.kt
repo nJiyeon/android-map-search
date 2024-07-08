@@ -1,8 +1,6 @@
 package campus.tech.kakao.map
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,41 +20,30 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupListeners()
+        setupView()
+        observeViewModel()
+    }
+
+    private fun setupListeners() {
         binding.btnDelete.setOnClickListener {
             binding.etSearch.setText(null)
         }
 
-        setupView()
+        binding.etSearch.doOnTextChanged { text ->
+            handleSearchTextChanged(text.toString())
+        }
+    }
 
-        viewModel.places.observe(this, Observer { cursor ->
-            placeAdapter.submitCursor(cursor)
-        })
-
-        viewModel.history.observe(this, Observer { cursor ->
-            historyAdapter.submitCursor(cursor)
-        })
-
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Do nothing
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val searchText = s.toString().trim()
-                if (searchText.isEmpty()) {
-                    binding.tvNoResults.visibility = View.VISIBLE
-                    binding.recyclerViewPlaces.visibility = View.INVISIBLE
-                } else {
-                    binding.tvNoResults.visibility = View.INVISIBLE
-                    binding.recyclerViewPlaces.visibility = View.VISIBLE
-                    viewModel.searchPlaces(searchText)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                // Do nothing
-            }
-        })
+    private fun handleSearchTextChanged(searchText: String) {
+        if (searchText.trim().isEmpty()) {
+            binding.tvNoResults.visibility = View.VISIBLE
+            binding.recyclerViewPlaces.visibility = View.INVISIBLE
+        } else {
+            binding.tvNoResults.visibility = View.INVISIBLE
+            binding.recyclerViewPlaces.visibility = View.VISIBLE
+            viewModel.searchPlaces(searchText)
+        }
     }
 
     private fun setupView() {
@@ -65,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         historyAdapter = HistoryAdapter { name ->
-            viewModel.removeHistory(name) // 삭제 버튼 클릭 시 ViewModel의 removeHistory 메서드 호출
+            viewModel.removeHistory(name)
         }
 
         binding.recyclerViewPlaces.apply {
@@ -77,5 +64,27 @@ class MainActivity : AppCompatActivity() {
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
         }
+    }
+
+    private fun observeViewModel() {
+        observePlaces()
+        observeHistory()
+    }
+
+    private fun observePlaces() {
+        viewModel.places.observe(this, Observer { places ->
+            placeAdapter.submitList(places)
+        })
+    }
+
+    private fun observeHistory() {
+        viewModel.history.observe(this, Observer { history ->
+            historyAdapter.submitList(history)
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.etSearch.clearTextWatcher()
     }
 }
