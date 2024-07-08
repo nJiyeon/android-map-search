@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.ui.adapter.HistoryAdapter
+import campus.tech.kakao.map.ui.adapter.PlaceAdapter
+import campus.tech.kakao.map.utils.clearTextWatcher
+import campus.tech.kakao.map.utils.doOnTextChanged
+import campus.tech.kakao.map.viewmodel.PlaceViewModel
 
 class MainActivity : AppCompatActivity() {
 

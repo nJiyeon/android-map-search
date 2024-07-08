@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemHistoryBinding
+import campus.tech.kakao.map.model.HistoryItem
 
-class HistoryAdapter(private val onDelete: (String) -> Unit) : ListAdapter<HistoryItem, HistoryAdapter.ViewHolder>(HistoryDiffCallback()) {
+class HistoryAdapter(private val onDelete: (String) -> Unit) : ListAdapter<HistoryItem, HistoryAdapter.ViewHolder>(
+    HistoryDiffCallback()
+) {
 
     inner class ViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         init {

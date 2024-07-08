@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemPlaceBinding
+import campus.tech.kakao.map.model.PlaceItem
 
-class PlaceAdapter(private val onClick: (String) -> Unit) : ListAdapter<PlaceItem, PlaceAdapter.ViewHolder>(PlaceDiffCallback()) {
+class PlaceAdapter(private val onClick: (String) -> Unit) : ListAdapter<PlaceItem, PlaceAdapter.ViewHolder>(
+    PlaceDiffCallback()
+) {
 
     inner class ViewHolder(private val binding: ItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
