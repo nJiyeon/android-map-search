@@ -1,24 +1,28 @@
 package campus.tech.kakao.map
 
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemPlaceBinding
 
-class PlaceAdapter(private val onClick: (String) -> Unit) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
-
-    private var cursor: Cursor? = null
+class PlaceAdapter(private val onClick: (String) -> Unit) : ListAdapter<PlaceItem, PlaceAdapter.ViewHolder>(PlaceDiffCallback()) {
 
     inner class ViewHolder(private val binding: ItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(name: String, address: String, category: String) {
-            binding.tvName.text = name
-            binding.tvAddress.text = address
-            binding.tvCategory.text = category
+        init {
             binding.root.setOnClickListener {
-                onClick(name)
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onClick(getItem(position).name)
+                }
             }
+        }
+
+        fun bind(placeItem: PlaceItem) {
+            binding.tvName.text = placeItem.name
+            binding.tvAddress.text = placeItem.address
+            binding.tvCategory.text = placeItem.category
         }
     }
 
@@ -28,21 +32,16 @@ class PlaceAdapter(private val onClick: (String) -> Unit) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        cursor?.apply {
-            moveToPosition(position)
-            val name = getString(getColumnIndexOrThrow(PlaceContract.COLUMN_TITLE))
-            val address = getString(getColumnIndexOrThrow(PlaceContract.COLUMN_LOCATION))
-            val category = getString(getColumnIndexOrThrow(PlaceContract.COLUMN_CATEGORY))
-            holder.bind(name, address, category)
+        holder.bind(getItem(position))
+    }
+
+    class PlaceDiffCallback : DiffUtil.ItemCallback<PlaceItem>() {
+        override fun areItemsTheSame(oldItem: PlaceItem, newItem: PlaceItem): Boolean {
+            return oldItem.name == newItem.name
         }
-    }
 
-    override fun getItemCount(): Int {
-        return cursor?.count ?: 0
-    }
-
-    fun submitCursor(cursor: Cursor?) {
-        this.cursor = cursor
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: PlaceItem, newItem: PlaceItem): Boolean {
+            return oldItem == newItem
+        }
     }
 }

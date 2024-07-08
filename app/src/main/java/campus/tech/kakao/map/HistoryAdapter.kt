@@ -1,22 +1,26 @@
 package campus.tech.kakao.map
 
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemHistoryBinding
 
-class HistoryAdapter(private val onDelete: (String) -> Unit) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
-
-    private var cursor: Cursor? = null
+class HistoryAdapter(private val onDelete: (String) -> Unit) : ListAdapter<HistoryItem, HistoryAdapter.ViewHolder>(HistoryDiffCallback()) {
 
     inner class ViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(name: String) {
-            binding.tvName.text = name
+        init {
             binding.ibDelete.setOnClickListener {
-                onDelete(name)
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onDelete(getItem(position).name)
+                }
             }
+        }
+
+        fun bind(historyItem: HistoryItem) {
+            binding.tvName.text = historyItem.name
         }
     }
 
@@ -26,20 +30,16 @@ class HistoryAdapter(private val onDelete: (String) -> Unit) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        cursor?.apply {
-            moveToPosition(position)
-            val name = getString(getColumnIndexOrThrow(HistoryContract.COLUMN_NAME))
-            holder.bind(name)
+        holder.bind(getItem(position))
+    }
+
+    class HistoryDiffCallback : DiffUtil.ItemCallback<HistoryItem>() {
+        override fun areItemsTheSame(oldItem: HistoryItem, newItem: HistoryItem): Boolean {
+            return oldItem.name == newItem.name
+        }
+
+        override fun areContentsTheSame(oldItem: HistoryItem, newItem: HistoryItem): Boolean {
+            return oldItem == newItem
         }
     }
-
-    override fun getItemCount(): Int {
-        return cursor?.count ?: 0
-    }
-
-    fun submitCursor(cursor: Cursor?) {
-        this.cursor = cursor
-        notifyDataSetChanged()
-    }
 }
-
