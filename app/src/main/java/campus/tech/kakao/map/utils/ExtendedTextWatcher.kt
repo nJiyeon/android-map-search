@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.utils
 
 import android.text.Editable
 import android.text.TextWatcher
