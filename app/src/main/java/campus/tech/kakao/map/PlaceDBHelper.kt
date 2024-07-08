@@ -17,15 +17,9 @@ class PlaceDBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
     }
 
     private fun insertInitialRecords(db: SQLiteDatabase?) {
-        db?.beginTransaction()
-        try {
-            db?.let {
-                insertCafeRecords(it)
-                insertPharmacyRecords(it)
-            }
-            db?.setTransactionSuccessful()
-        } finally {
-            db?.endTransaction()
+        db?.let {
+            insertCafeRecords(it)
+            insertPharmacyRecords(it)
         }
     }
 
