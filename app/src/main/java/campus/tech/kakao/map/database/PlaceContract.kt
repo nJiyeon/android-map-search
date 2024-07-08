@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.database
 
 object PlaceContract {
         const val TABLE_NAME = "places"

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.database
 
 object HistoryContract {
     const val TABLE_NAME = "History"
