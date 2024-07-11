@@ -1,153 +1,64 @@
 package campus.tech.kakao.map.view
 
-import android.content.ContentValues
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.adapter.keyword.KeywordAdapter
 import campus.tech.kakao.map.adapter.search.SearchAdapter
-import campus.tech.kakao.map.repository.location.LocationContract
-import campus.tech.kakao.map.repository.location.LocationDbHelper
-import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
-import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModelFactory
+import campus.tech.kakao.map.api.KakaoLocalApi
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
 import campus.tech.kakao.map.viewmodel.search.SearchViewModelFactory
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import campus.tech.kakao.map.model.Item
+import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 
-class SearchActivity : AppCompatActivity() {
-    private val dbHelper by lazy { LocationDbHelper(this) }
+class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchViewModel: SearchViewModel
-    private lateinit var keywordViewModel: KeywordViewModel
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var keywordAdapter: KeywordAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupViewModels()
-        setupBinding()
-        makeLocationData()
-        setupSearchResultViewRecyclerView()
-        setupKeywordHistoryView()
-        setupEditText()
-        bindingSearchResult()
-        bindingKeywordHistory()
-    }
-
-    override fun onDestroy() {
-        dbHelper.close()
-        super.onDestroy()
-    }
-
-    private fun setupViewModels() {
-        searchViewModel =
-            ViewModelProvider(this, SearchViewModelFactory(this))[SearchViewModel::class.java]
-        keywordViewModel =
-            ViewModelProvider(this, KeywordViewModelFactory(this))[KeywordViewModel::class.java]
-
-    }
-
-    private fun setupBinding() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-    }
+        setContentView(binding.root)
 
-    private fun makeLocationData() {
-        if (isCreatedLocationData()) return
+        // Retrofit 초기화
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://dapi.kakao.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api = retrofit.create(KakaoLocalApi::class.java)
 
-        val db = dbHelper.writableDatabase
-        ContentValues().apply {
-            for (i in 1..15) {
-                put(LocationContract.PLACE_NAME, "약국$i")
-                put(LocationContract.ADDRESS_NAME, "서울 강남구 대치동 $i")
-                put(LocationContract.CATEGORY_GROUP_NAME, "약국")
-                db.insert(LocationContract.TABLE_NAME, null, this)
-            }
-            for (i in 1..15) {
-                put(LocationContract.PLACE_NAME, "카페$i")
-                put(LocationContract.ADDRESS_NAME, "서울 성동구 성수동 $i")
-                put(LocationContract.CATEGORY_GROUP_NAME, "카페")
-                db.insert(LocationContract.TABLE_NAME, null, this)
-            }
-        }
+        // ViewModel 초기화
+        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
 
-        checkLocationDataCreated()
-    }
-
-    private fun isCreatedLocationData(): Boolean {
-        val sharedPreference = getSharedPreferences("db_update", MODE_PRIVATE)
-        return sharedPreference.getBoolean("exist", false)
-    }
-
-    private fun checkLocationDataCreated() {
-        val sharedPreference = getSharedPreferences("db_update", MODE_PRIVATE)
-        val editor: SharedPreferences.Editor = sharedPreference.edit()
-        editor.putBoolean("exist", true)
-        editor.apply()
-    }
-
-    private fun setupSearchResultViewRecyclerView() {
-        searchAdapter = SearchAdapter(keywordViewModel)
+        // RecyclerView 설정
+        searchAdapter = SearchAdapter(this)
         binding.searchResultView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = searchAdapter
+            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        val dividerItemDecoration = DividerItemDecoration(
-            binding.searchResultView.context,
-            (binding.searchResultView.layoutManager as LinearLayoutManager).orientation
-        )
-        binding.searchResultView.addItemDecoration(dividerItemDecoration)
-    }
-
-    private fun setupKeywordHistoryView() {
-        keywordAdapter = KeywordAdapter(keywordViewModel)
-        binding.keywordHistoryView.apply {
-            layoutManager =
-                LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
-            adapter = keywordAdapter
-        }
-        keywordViewModel.readKeywordHistory()
-    }
-
-    private fun setupEditText() {
-        binding.searchTextInput.setOnFocusChangeListener { _, _ ->
-            keywordViewModel.readKeywordHistory()
-        }
-
+        // 검색 입력 설정
         binding.searchTextInput.doAfterTextChanged {
-            binding.searchTextInput.text.toString().let {
-                searchViewModel.searchLocationData(it)
-            }
+            searchViewModel.searchLocationData(it.toString())
         }
 
-        binding.deleteTextInput.setOnClickListener {
-            binding.searchTextInput.setText("")
-        }
-    }
-
-    private fun bindingSearchResult() {
+        // 데이터 관찰하여 UI 업데이트
         searchViewModel.items.observe(this) {
-            if (it.isEmpty()) {
-                binding.searchResultView.visibility = View.GONE
-                binding.emptyView.visibility = View.VISIBLE
-            } else {
-                searchAdapter.submitList(it)
-                binding.searchResultView.visibility = View.VISIBLE
-                binding.emptyView.visibility = View.GONE
-            }
+            searchAdapter.submitList(it)
+            binding.searchResultView.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
-    private fun bindingKeywordHistory() {
-        keywordViewModel.keyword.observe(this) {
-            keywordAdapter.submitList(it)
-        }
+    override fun onSearchItemClick(item: Item) {
+        // 검색 항목 클릭 시 수행할 작업
     }
 }

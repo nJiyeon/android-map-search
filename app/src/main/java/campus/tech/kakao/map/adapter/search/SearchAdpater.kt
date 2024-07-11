@@ -14,16 +14,15 @@ import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 
 class SearchAdapter(
     private val onSearchItemClickListener: OnSearchItemClickListener
-) :
-    ListAdapter<Item, RecyclerView.ViewHolder>(
-        object : DiffUtil.ItemCallback<Item>() {
-            override fun areItemsTheSame(oldItem: Item, newItem: Item) =
-                oldItem.place == newItem.place
+) : ListAdapter<Item, RecyclerView.ViewHolder>(
+    object : DiffUtil.ItemCallback<Item>() {
+        override fun areItemsTheSame(oldItem: Item, newItem: Item) =
+            oldItem.place == newItem.place
 
-            override fun areContentsTheSame(oldItem: Item, newItem: Item) =
-                oldItem == newItem
-        }
-    ) {
+        override fun areContentsTheSame(oldItem: Item, newItem: Item) =
+            oldItem == newItem
+    }
+) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
