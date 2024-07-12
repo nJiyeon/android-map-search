@@ -2,9 +2,11 @@ import java.util.Properties
 
 fun getApiKey(key: String): String {
     val properties = Properties()
-    file("../local.properties").inputStream().use { properties.load(it) }
+    val localPropertiesFile = rootProject.file("local.properties")
+    localPropertiesFile.inputStream().use { properties.load(it) }
     return properties.getProperty(key)
 }
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,9 +24,9 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-
-        resValue("string","kakaoApiKey",getApiKey("kakaoApiKey"))
-        buildConfigField("String","kakaoRestApiKey","\"${getApiKey("kakaoRestApiKey")}")
+        // local.properties 파일에서 API 키를 읽어옵니다.
+        resValue("string", "kakaoApiKey", getApiKey("kakaoApiKey"))
+        buildConfigField("String", "KAKAO_REST_API_KEY", "\"${getApiKey("kakaoRestApiKey")}\"")
     }
 
     buildTypes {
@@ -63,8 +65,8 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation("androidx.activity:activity:1.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
-    implementation ("com.kakao.sdk:v2-user:2.9.0")
-    implementation ("com.kakao.maps.open:android:2.9.5")
+    implementation("com.kakao.sdk:v2-user:2.9.0")
+    implementation("com.kakao.maps.open:android:2.9.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
