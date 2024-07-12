@@ -1,6 +1,8 @@
 package campus.tech.kakao.map.view
 
+import com.kakao.sdk.common.util.Utility
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
@@ -27,6 +29,8 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Log.d("123123", Utility.getKeyHash(this))
+
         // Retrofit 초기화
         val retrofit = Retrofit.Builder()
             .baseUrl("https://dapi.kakao.com/")
@@ -35,7 +39,8 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         val api = retrofit.create(KakaoLocalApi::class.java)
 
         // ViewModel 초기화
-        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
+        searchViewModel =
+            ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
 
         // RecyclerView 설정
         searchAdapter = SearchAdapter(this)
@@ -62,3 +67,4 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         // 검색 항목 클릭 시 수행할 작업
     }
 }
+
