@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.api
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -16,18 +17,31 @@ interface KakaoLocalApi {
 
 // 데이터 모델
 data class KakaoSearchResponse(
+    @SerializedName("documents")
     val documents: List<Document>,
+
+    @SerializedName("meta")
     val meta: Meta
 )
 
 data class Document(
-    val place_name: String,
-    val address_name: String,
-    val category_group_name: String
+    @SerializedName("place_name")
+    val placeName: String,
+
+    @SerializedName("address_name")
+    val addressName: String,
+
+    @SerializedName("category_group_name")
+    val categoryGroupName: String
 )
 
 data class Meta(
-    val total_count: Int,
-    val pageable_count: Int,
-    val is_end: Boolean
+    @SerializedName("total_count")
+    val totalCount: Int,
+
+    @SerializedName("pageable_count")
+    val pageableCount: Int,
+
+    @SerializedName("is_end")
+    val isEnd: Boolean
 )
