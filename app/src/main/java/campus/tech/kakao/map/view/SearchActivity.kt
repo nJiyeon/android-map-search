@@ -28,7 +28,7 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
 
         // Retrofit 초기화
         val retrofit = Retrofit.Builder()

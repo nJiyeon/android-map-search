@@ -32,13 +32,13 @@ class KeywordAdapter(private val onKeywordItemClickListener: OnKeywordItemClickL
 }
 
 class KeywordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val remove: ImageView = view.findViewById(R.id.remove_icon)
-    private val keyword: TextView = view.findViewById(R.id.keyword)
+    private val removeIconView: ImageView = view.findViewById(R.id.remove_icon)
+    private val keywordTextView: TextView = view.findViewById(R.id.keyword)
 
     fun bindViewHolder(keyword: String, onKeywordItemClickListener: OnKeywordItemClickListener) {
-        this.keyword.text = keyword
+        keywordTextView.text = keyword
 
-        remove.setOnClickListener {
+        removeIconView.setOnClickListener {
             onKeywordItemClickListener.onKeywordItemDeleteClick(keyword)
         }
     }
