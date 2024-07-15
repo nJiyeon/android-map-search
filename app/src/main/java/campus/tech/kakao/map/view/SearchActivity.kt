@@ -1,23 +1,22 @@
 package campus.tech.kakao.map.view
 
-import com.kakao.sdk.common.util.Utility
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.adapter.search.SearchAdapter
 import campus.tech.kakao.map.api.KakaoLocalApi
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import campus.tech.kakao.map.model.Item
+import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
 import campus.tech.kakao.map.viewmodel.search.SearchViewModelFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import campus.tech.kakao.map.model.Item
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 
 class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
     private lateinit var binding: ActivitySearchBinding
@@ -29,17 +28,15 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         // Retrofit 초기화
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dapi.kakao.com/")
+            .baseUrl(BuildConfig.KAKAO_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val api = retrofit.create(KakaoLocalApi::class.java)
 
         // ViewModel 초기화
-        searchViewModel =
-            ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
+        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
 
         // RecyclerView 설정
         searchAdapter = SearchAdapter(this)
@@ -66,4 +63,3 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener {
         // 검색 항목 클릭 시 수행할 작업
     }
 }
-

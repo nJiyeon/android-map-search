@@ -27,6 +27,7 @@ android {
         // local.properties 파일에서 API 키를 읽어옵니다.
         resValue("string", "kakaoApiKey", getApiKey("kakaoApiKey"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("kakaoRestApiKey"))
+        buildConfigField("String", "KAKAO_BASE_URL", getApiKey("kakaoBaseUrl"))
     }
 
     buildTypes {
