@@ -5,11 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.repository.keyword.KeywordRepository
-import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 
-class KeywordViewModel(private val keywordRepository: KeywordRepository) : ViewModel(),
-    OnSearchItemClickListener, OnKeywordItemClickListener {
+class KeywordViewModel(private val keywordRepository: KeywordRepository) : ViewModel() {
     private val _keyword = MutableLiveData<List<String>>()
     val keyword: LiveData<List<String>>
         get() = _keyword
@@ -29,11 +26,11 @@ class KeywordViewModel(private val keywordRepository: KeywordRepository) : ViewM
         _keyword.value = keywordRepository.read()
     }
 
-    override fun onSearchItemClick(item: Item) {
+    fun onSearchItemClick(item: Item) {
         updateKeywordHistory(item.place)
     }
 
-    override fun onKeywordItemDeleteClick(keyword: String) {
+    fun onKeywordItemDeleteClick(keyword: String) {
         deleteKeywordHistory(keyword)
     }
 }

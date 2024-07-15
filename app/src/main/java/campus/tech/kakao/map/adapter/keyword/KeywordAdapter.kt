@@ -12,15 +12,13 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
 
 class KeywordAdapter(private val onKeywordItemClickListener: OnKeywordItemClickListener) :
-    ListAdapter<String, KeywordViewHolder>(
+    ListAdapter<String, KeywordAdapter.KeywordViewHolder>(
         object : DiffUtil.ItemCallback<String>() {
-            override fun areItemsTheSame(oldItem: String, newItem: String) =
-                oldItem == newItem
-
-            override fun areContentsTheSame(oldItem: String, newItem: String) =
-                oldItem == newItem
+            override fun areItemsTheSame(oldItem: String, newItem: String) = oldItem == newItem
+            override fun areContentsTheSame(oldItem: String, newItem: String) = oldItem == newItem
         }
     ) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeywordViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_keyword, parent, false)
         return KeywordViewHolder(view)
@@ -29,17 +27,16 @@ class KeywordAdapter(private val onKeywordItemClickListener: OnKeywordItemClickL
     override fun onBindViewHolder(holder: KeywordViewHolder, position: Int) {
         holder.bindViewHolder(getItem(position), onKeywordItemClickListener)
     }
-}
 
-class KeywordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val removeIconView: ImageView = view.findViewById(R.id.remove_icon)
-    private val keywordTextView: TextView = view.findViewById(R.id.keyword)
+    class KeywordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val keywordTextView: TextView = view.findViewById(R.id.keyword)
+        private val removeIconView: ImageView = view.findViewById(R.id.remove_icon)
 
-    fun bindViewHolder(keyword: String, onKeywordItemClickListener: OnKeywordItemClickListener) {
-        keywordTextView.text = keyword
-
-        removeIconView.setOnClickListener {
-            onKeywordItemClickListener.onKeywordItemDeleteClick(keyword)
+        fun bindViewHolder(keyword: String, onKeywordItemClickListener: OnKeywordItemClickListener) {
+            keywordTextView.text = keyword
+            removeIconView.setOnClickListener {
+                onKeywordItemClickListener.onKeywordItemDeleteClick(keyword)
+            }
         }
     }
 }

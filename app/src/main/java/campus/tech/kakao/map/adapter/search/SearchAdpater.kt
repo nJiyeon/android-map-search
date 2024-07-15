@@ -14,7 +14,7 @@ import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 
 class SearchAdapter(
     private val onSearchItemClickListener: OnSearchItemClickListener
-) : ListAdapter<Item, RecyclerView.ViewHolder>(
+) : ListAdapter<Item, SearchAdapter.SearchViewHolder>(
     object : DiffUtil.ItemCallback<Item>() {
         override fun areItemsTheSame(oldItem: Item, newItem: Item) =
             oldItem.place == newItem.place
@@ -23,19 +23,14 @@ class SearchAdapter(
             oldItem == newItem
     }
 ) {
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
         return SearchViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is SearchViewHolder) {
-            val item = getItem(position)
-            holder.bindViewHolder(item, onSearchItemClickListener)
-        }
+    override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bindViewHolder(item, onSearchItemClickListener)
     }
 
     class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
