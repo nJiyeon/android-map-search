@@ -9,10 +9,10 @@ class KeywordRepository(context: Context) {
 
     fun update(keyword: String) {
         val db = dbHelper.writableDatabase
-        ContentValues().apply {
+        val values = ContentValues().apply {
             put(KeywordContract.RECENT_KEYWORD, keyword)
-            db.insert(KeywordContract.TABLE_NAME, null, this)
         }
+        db.insert(KeywordContract.TABLE_NAME, null, values)
     }
 
     fun read(): List<String> {
@@ -33,13 +33,13 @@ class KeywordRepository(context: Context) {
             while (moveToNext()) {
                 keywords.add(getString(getColumnIndexOrThrow(KeywordContract.RECENT_KEYWORD)))
             }
+            close()
         }
         return keywords
     }
 
     fun delete(keyword: String) {
         val db = dbHelper.writableDatabase
-
         db.delete(
             KeywordContract.TABLE_NAME,
             "${KeywordContract.RECENT_KEYWORD} = ?",
