@@ -15,7 +15,7 @@ class SearchViewModel(private val api: KakaoLocalApi) : ViewModel() {
             try {
                 val response = api.searchKeyword("KakaoAK ${campus.tech.kakao.map.BuildConfig.KAKAO_REST_API_KEY}", keyword)
                 _items.value = response.documents.map {
-                    Item(it.place_name, it.address_name, it.category_group_name)
+                    Item(it.placeName, it.addressName, it.categoryGroupName)
                 }
             } catch (e: Exception) {
                 // Handle error
